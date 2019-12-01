@@ -35,7 +35,6 @@ def search(songname):
 			file = open("resultados.html","w")
 			file.write(finalhtml)
 			file.close()
-			#print "Completado! abra el archivo 'resultados.html' para ver los enlaces de descarga"
 			if len(song_names)>0:
 				print(str(len(song_names))+ " melodías encontradas. Abriendo navegador.")
 				webbrowser.open('resultados.html')
@@ -44,12 +43,6 @@ def search(songname):
 			complete = True
 		except Exception:
 			print "Error en la conexión."
-#	x = limite
-#	for element in song_names:
-#		print element
-#		x -= 1
-#		if(x==0):
-#			break
 
 
 def main():
