@@ -5,7 +5,7 @@ _Ejecuta el archivo .py de la siguiente manera:_
 ```
 $ python mp3cd.py "nombre de la melodía a buscar"
 ```
--Por ejemplo:_
+_Por ejemplo:_
 ```
 $ python mp3cd.py "Era - Ameno"
 ```
