@@ -1,0 +1,28 @@
+@font-face{
+	font-family: "roboto";
+	src: url(roboto.ttf);
+}
+
+a{
+	color: #C61236;
+}
+
+article{
+	padding: 20px;
+	background-color: #19181E;
+}
+
+body{
+	background-color: #100F14;
+	padding: 40px;
+}
+
+p{
+	font-family: "roboto";
+	color: #ACACAC
+}
+
+h1{
+	font-family: "roboto";
+	color: #ACACAC;	
+}
