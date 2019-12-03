@@ -43,9 +43,13 @@ def search(songname):
 			complete = True
 		except Exception:
 			print "Error en la conexión."
+			complete = True
 
 
 def main():
-	search(sys.argv[1])
+	try:
+		search(sys.argv[1])
+	except Exception:
+		print "Faltan argumentos"
 
 main()
