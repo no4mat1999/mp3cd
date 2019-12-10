@@ -3,11 +3,19 @@ import urllib2
 import sys
 import webbrowser
 
+# By Virtual Luxury
+
 url = "http://mp3clan.top/mp3/" #actualizar en caso de que mp3clan cambie de dominio
 song_urls = []
 song_names = []
 
 def search(songname):
+	print "\n   ███╗   ███╗██████╗ ██████╗  ██████╗██████╗ "
+	print "   ████╗ ████║██╔══██╗╚════██╗██╔════╝██╔══██╗"
+	print "   ██╔████╔██║██████╔╝ █████╔╝██║     ██║  ██║"
+	print "   ██║╚██╔╝██║██╔═══╝  ╚═══██╗██║     ██║  ██║"
+	print "   ██║ ╚═╝ ██║██║     ██████╔╝╚██████╗██████╔╝"
+	print "   ╚═╝     ╚═╝╚═╝     ╚═════╝  ╚═════╝╚═════╝ \n"
 	print "Buscando..."
 	songnameclean = songname.replace(" ","_")
 	complete = False
