@@ -1,54 +1,63 @@
 # -*- coding: utf-8 -*-
 from bs4 import BeautifulSoup
-import urllib2
+from clint.textui import progress
+from urllib import request
+from os import system, name
+import requests
 import webbrowser
 import sys
 import argparse
-import webbrowser
-
-# apt install python-bs4
 
 # update if necessary
 MP3CLAN_URL = 'http://mp3clan.top/mp3/'
-TEMPLATE_FILE = 'resources/template.txt'
-FILENAME = 'resultados.html'
 
 class MusicFile:
 	song_name = ''
 	download_url = ''
 
-def generate_results(music_list):
-	try:
-		final_file = ''
-		with open(TEMPLATE_FILE) as template:
-			final_file = template.read()
-		for element in music_list:
-			final_file += '<p>' + str(element.song_name) + '</p>'
-			final_file += '<audio controls><source src="' + str(element.download_url) + '"></audio>'
-		final_file += '</article></body><html>'
-		file = open(FILENAME, 'w')
-		file.write(final_file)
-		file.close()
-		webbrowser.open(FILENAME)
-	except Exception, e:
-		print('Error generating ' + str(FILENAME))
-		print e
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
 
-def check_if_avalible(music_file):
+def clear():
+    if name == 'nt':
+        _ = system('cls')
+    else:
+        _ = system('clear')
+
+def download(music_file):
 	try:
-		urllib2.urlopen(music_file.download_url)
-		return True
-	except urllib2.HTTPError, e:
-		print(e.code)
-	except urllib2.URLError, e:
-		print(e.args)
-	return False
+		print(bcolors.HEADER + '- Download ' + bcolors.WARNING + music_file.song_name + bcolors.HEADER)
+		web_session = requests.Session()
+		web_session.get(MP3CLAN_URL)
+		print('- Session started! Getting file URL, please wait')
+		resp = web_session.get(music_file.download_url)
+		real_url_file = resp.url
+		print('- File URL: ' + bcolors.WARNING + real_url_file)
+		print(bcolors.HEADER + '- Downloading...')
+		file = requests.get(real_url_file, allow_redirects=True, stream=True)
+		with open(music_file.song_name+'.mp3', 'wb') as f:
+			total_length = int(file.headers.get('content-length'))
+			for chunk in progress.bar(file.iter_content(chunk_size=1024), expected_size=(total_length/1024) + 1):
+				if chunk:
+					f.write(chunk)
+					f.flush
+		web_session.close()
+		print(bcolors.HEADER + '- Done!')
+	except Exception as e:
+		print(e)
 
 def search(song_name):
 	song_name = song_name.replace(' ', '_')
 	music_list = []
 	try:
-		web_page = urllib2.urlopen(MP3CLAN_URL + song_name)
+		web_page = request.urlopen(MP3CLAN_URL + song_name)
 		soup = BeautifulSoup(web_page.read().decode("utf-8"), "html.parser")
 		mp3clan_list = soup.find_all("li", {"class": "mp3list-play"})
 		# remove first element because it's not a song
@@ -59,23 +68,27 @@ def search(song_name):
 			music_file.song_name = (soup.find("div")).attrs.get('title')
 			music_file.download_url = (soup.find("a")).attrs.get('href')
 			music_list.append(music_file)
-	except Exception, e:
+	except Exception as e:
 		print('Problem searching music')
-		print e
+		print(e)
 	return music_list
 
 def start_process(args):
-	print('Searching...')
+	print(bcolors.HEADER + 'Searching...')
 	music_list = search(str(args.s))
-	if args.c:
-		print('Validating...')
-		music_list_checked = []
-		for element in music_list:
-			if (check_if_avalible(element)):
-				music_list_checked.append(element)
-		music_list = music_list_checked
-	print('Generating html...')
-	generate_results(music_list)
+	if(len(music_list)==0):
+		print('Not found')
+		exit()
+	clear()
+	count = 1
+	for element in music_list:
+		print(bcolors.OKBLUE + str(count) + bcolors.HEADER  + ' - ' + element.song_name)
+		count += 1
+	select = -1
+	while (select < 1 or select > len(music_list)):
+		select = int(input(bcolors.OKBLUE + '> '))
+	clear()
+	download(music_list[select-1])
 
 def main():
 	parser = argparse.ArgumentParser(description='Python mp3clan simple downloader')
@@ -85,11 +98,8 @@ def main():
 						required=True,
 						dest='s',
 						help='Search a song name')
-	parser.add_argument('-c', '--check', action='store_true',
-						dest='c',
-						help='Enable validate file URL step')
 	parser.add_argument('--version', action='version',
-						version='%(prog)s 1.0')
+						version='%(prog)s 1.1')
 
 	start_process(parser.parse_args())
 
