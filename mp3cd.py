@@ -6,7 +6,8 @@ import requests
 import argparse
 
 # update if necessary
-MP3CLAN_URL = 'http://mp3clan.top/mp3/'
+MP3CLAN_URL_BASE = 'http://mp3clan.top/mp3/'
+MP3CLAN_URL = 'http://mp3clan.top/mp3_source.php'
 
 
 class MusicFile:
@@ -25,7 +26,7 @@ def download(music_file):
     try:
         print('- Download ' + music_file.song_name)
         web_session = requests.Session()
-        web_session.get(MP3CLAN_URL)
+        web_session.get(MP3CLAN_URL_BASE)
         print('- Session started! Getting file URL, please wait')
         resp = web_session.get(music_file.download_url)
         real_url_file = resp.url
@@ -45,10 +46,13 @@ def download(music_file):
 
 
 def search(song_name):
-    song_name = song_name.replace(' ', '_')
+    # song_name = song_name.replace(' ', '_')
+    song_name = song_name.replace(' ', '+')
     music_list = []
     try:
-        web_page = requests.get(MP3CLAN_URL + song_name)
+        # web_page = requests.get(MP3CLAN_URL + song_name) //Old method
+        options = {'page': 0, 'ser': song_name}
+        web_page = requests.post(MP3CLAN_URL, options)
         soup = BeautifulSoup(web_page.text, "html.parser")
         mp3clan_list = soup.find_all("li", {"class": "mp3list-play"})
         # remove first element because it's not a song
