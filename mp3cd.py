@@ -6,8 +6,8 @@ import requests
 import argparse
 
 # update if necessary
-MP3CLAN_URL_BASE = 'http://mp3clan.top/mp3/'
-MP3CLAN_URL = 'http://mp3clan.top/mp3_source.php'
+MP3CLAN_URL_BASE = 'http://mp3clan.mobi/mp3/'
+MP3CLAN_URL = 'http://mp3clan.mobi/mp3_source.php'
 
 
 class MusicFile:
